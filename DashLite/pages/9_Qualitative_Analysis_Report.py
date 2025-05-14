@@ -18,7 +18,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-st.title("Qualitative Analysis Report")
+#st.title("Qualitative Analysis Report")
 if "authenticated" not in st.session_state:
     st.session_state["authenticated"] = False
 
