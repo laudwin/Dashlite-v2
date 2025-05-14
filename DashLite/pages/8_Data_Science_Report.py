@@ -19,7 +19,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-st.title("Data Science Report (Converse)")
+#st.title("Data Science Report (Converse)")
 if "authenticated" not in st.session_state:
     st.session_state["authenticated"] = False
 
