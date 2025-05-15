@@ -29,7 +29,9 @@ JIDE_URL="https://flowise-210n.onrender.com/api/v1/prediction/1a47203a-a94d-4c9d
 
 TABLE = 'Post'
 # -------------------- Styling Function ------------------ #
-
+def render_telkom_sidebar_logo():
+    st.sidebar.image("telkom-logo.png", use_container_width=True)
+    
 def inject_telkom_styling():
     st.set_page_config(layout="wide")
 
