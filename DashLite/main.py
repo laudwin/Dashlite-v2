@@ -30,7 +30,6 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 #st.header('TISL Social Media Mentions Visualisation')
-
 # ✅ Define the month_diff function first
 def month_diff(start_date, end_date):
     return (end_date.year - start_date.year) * 12 + (end_date.month - start_date.month) + 1
