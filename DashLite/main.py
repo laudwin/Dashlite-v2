@@ -7,8 +7,9 @@ import plotly.express as px
 from sqlalchemy import create_engine
 import plotly.graph_objects as go
 from utils import TABLE, login
-from utils import inject_telkom_styling, render_telkom_footer
+from utils import inject_telkom_styling, render_telkom_footer,render_telkom_sidebar_logo
 inject_telkom_styling()
+
 
 #st.set_page_config(layout="wide")
 
@@ -153,16 +154,56 @@ fig.update_layout(
 
 st.plotly_chart(fig, use_container_width=True)
 
+
 st.markdown("""
-### Summary of the Plot
-This chart shows the number of mentions over time. It helps identify periods of high and low activity. 
-Use this visualization to spot trends, spikes, or patterns in user engagement across the selected date range.
-""")
+<div>
+    <h5>Summary of the Plot</h5>
+</div>
+<p >
+   This chart shows the number of mentions over time. It helps identify periods of high and low activity. Use this visualization to spot trends, spikes, or patterns in user engagement across the selected date range..
+</p>
+""", unsafe_allow_html=True)
+
+
 
 df_time = df[
         (df['PublishedDate'] >= pd.to_datetime(normalized_start_date)) & 
         (df['PublishedDate'] <= pd.to_datetime(normalized_end_date))
     ]
+
+st.markdown("""
+            ##### 📦 How to Interpret a Box Plot
+            A **box plot** (also known as a **box-and-whisker plot**) is a compact way to visualize the **distribution, spread, and potential outliers** of a dataset. Here's what each part represents:
+
+
+            ##### 📏 Key Components
+
+            - **Box (Middle 50%)**:  
+            The box spans from the **1st quartile (Q1)** to the **3rd quartile (Q3)**.  
+            This range is called the **interquartile range (IQR)** and contains the **middle 50%** of the data.
+
+            - **Line inside the box (Median)**:  
+            This is the **median (Q2)** — the value that divides the data in half.  
+            If the line is centered, the distribution is symmetric. If it's skewed, the line will lean left or right.
+
+            - **Whiskers**:  
+            These extend from the box to show the range of the data that’s **not considered an outlier**.  
+            Typically, whiskers reach to the **smallest and largest values within 1.5×IQR** from Q1 and Q3.
+
+            - **Dots (Outliers)**:  
+            Points beyond the whiskers are **potential outliers** — unusually high or low values worth investigating.
+
+
+
+
+            ##### 🔍 How to Read One
+
+            - **Shorter box** → lower spread in the middle 50% of values.  
+            - **Long whiskers or many outliers** → more variability or unusual data points.  
+            - **Shifted median line** → skewed distribution (e.g., right-skewed if the median is closer to the left side of the box).
+            ---
+            """)
+
 # UI: Radio buttons
 view_option = st.radio(
     "Select Time Granularity:",
@@ -180,6 +221,9 @@ if view_option == "Annual":
                      'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb']
     
     df_time['MonthShort'] = pd.Categorical(df_time['MonthShort'], categories=fiscal_months, ordered=True)
+    
+    
+  
     
     group_label = "MonthShort"
     tick_format = None  # No need to format, it's just short month names
@@ -201,6 +245,8 @@ if view_option == "Annual":
         yaxis=dict(showgrid=True)
     )
 
+    
+
     st.plotly_chart(fig, use_container_width=True)
     # 📈 Trend line: Mean Post Count per Fiscal Month
     trend_df = df_time.groupby('MonthShort', observed=True)['PostCount'].mean().reset_index()
@@ -217,6 +263,20 @@ if view_option == "Annual":
         hovertemplate='Month: %{x}<br>Mean: %{y:.2f}<extra></extra>'
     ))
 
+
+    st.markdown("""
+##### 📊 Why Use Box Plots?
+
+
+- Quickly compare distributions across categories.
+- Spot **outliers**, **skewness**, and **data spread** at a glance.
+- Ideal for summarizing large datasets without plotting every point.
+                
+ <div style='height: 3px; background-color: #4F8BF9; margin-top: 0; margin-bottom: 10px;'></div>               
+""", unsafe_allow_html=True)
+
+
+    
     trend_fig.update_layout(
         title="📈 Trend: Mean Daily Post Count per Month (Fiscal Year)",
         xaxis_title="Month (Mar–Feb Fiscal)",
@@ -232,7 +292,40 @@ if view_option == "Annual":
         plot_bgcolor='white'
     )
 
+    
+
+    st.markdown("""
+                
+
+##### 📈 Interpreting the Trend Line
+
+The chart above displays a **trend line** showing the **average number of mentions over a year/month/week** across the selected period.
+
+
+##### 🔍 What the Trend Line Shows
+
+- Each point on the line represents the **mean number of mentions** made on a particular calendar day.
+- The line helps smooth out daily fluctuations and highlights the **underlying pattern** in the data.
+
+
+
+
+
+##### 🔮 Using the Trend Line for Prediction
+
+- The trend line can act as a **baseline for forecasting future behavior**.
+- For example, if Wednesdays regularly show high post volume, you can anticipate similar activity on upcoming Wednesdays unless new variables intervene.
+- It's especially helpful for planning, resource allocation, or detecting **anomalies** when actual activity diverges significantly from the expected mean.
+
+
+This makes the trend line a powerful tool not only for **understanding historical patterns**, but also for making **data-informed predictions** going forward.
+""")
+
     st.plotly_chart(trend_fig, use_container_width=True)
+
+    
+
+
 
 elif view_option == "Monthly":
     df_time['Period'] = df_time['PublishedDate'].dt.to_period('M').apply(lambda r: r.start_time)
@@ -272,6 +365,8 @@ elif view_option == "Monthly":
         marker=dict(size=8),
         hovertemplate='Day: %{x}<br>Mean: %{y:.2f}<extra></extra>'
     ))
+
+
 
     trend_fig.update_layout(
         title="📈 Trend: Mean Post Count per Calendar Day",
@@ -358,56 +453,8 @@ else:
     st.error("Invalid view option selected.")
     st.stop()
 
-st.markdown("""
-### 📦 How to Interpret a Box Plot
-A **box plot** (also known as a **box-and-whisker plot**) is a compact way to visualize the **distribution, spread, and potential outliers** of a dataset. Here's what each part represents:
-
-
-#### 📏 Key Components
-
-- **Box (Middle 50%)**:  
-  The box spans from the **1st quartile (Q1)** to the **3rd quartile (Q3)**.  
-  This range is called the **interquartile range (IQR)** and contains the **middle 50%** of the data.
-
-- **Line inside the box (Median)**:  
-  This is the **median (Q2)** — the value that divides the data in half.  
-  If the line is centered, the distribution is symmetric. If it's skewed, the line will lean left or right.
-
-- **Whiskers**:  
-  These extend from the box to show the range of the data that’s **not considered an outlier**.  
-  Typically, whiskers reach to the **smallest and largest values within 1.5×IQR** from Q1 and Q3.
-
-- **Dots (Outliers)**:  
-  Points beyond the whiskers are **potential outliers** — unusually high or low values worth investigating.
-
-
-#### 📊 Why Use Box Plots?
-
-- Quickly compare distributions across categories.
-- Spot **outliers**, **skewness**, and **data spread** at a glance.
-- Ideal for summarizing large datasets without plotting every point.
-
-
-#### 🔍 How to Read One
-
-- **Shorter box** → lower spread in the middle 50% of values.  
-- **Long whiskers or many outliers** → more variability or unusual data points.  
-- **Shifted median line** → skewed distribution (e.g., right-skewed if the median is closer to the left side of the box).
----
-""")
 
 st.markdown("""
-### 📈 Interpreting the Trend Line
-
-The chart above displays a **trend line** showing the **average number of mentions over a year/month/week** across the selected period.
-
-
-#### 🔍 What the Trend Line Shows
-
-- Each point on the line represents the **mean number of mentions** made on a particular calendar day.
-- The line helps smooth out daily fluctuations and highlights the **underlying pattern** in the data.
-
-
 #### 📊 Why This is Useful
 
 - By focusing on averages, the trend line reduces the impact of short-term spikes or drops, offering a **clearer view of central tendencies**.
@@ -416,16 +463,9 @@ The chart above displays a **trend line** showing the **average number of mentio
   - Weekly cycles or posting habits.
   - Outlier behavior when compared to the mean.
 
+<div style='height: 3px; background-color: #4F8BF9; margin-top: 10px; margin-bottom: 10px;'></div>
+""", unsafe_allow_html=True)
 
-#### 🔮 Using the Trend Line for Prediction
-
-- The trend line can act as a **baseline for forecasting future behavior**.
-- For example, if Wednesdays regularly show high post volume, you can anticipate similar activity on upcoming Wednesdays unless new variables intervene.
-- It's especially helpful for planning, resource allocation, or detecting **anomalies** when actual activity diverges significantly from the expected mean.
-
-
-This makes the trend line a powerful tool not only for **understanding historical patterns**, but also for making **data-informed predictions** going forward.
-""")
 
 
 fig_snr = go.Figure()
@@ -475,4 +515,5 @@ Low SNR (<1) may point to lower relative signal strength, possibly due to a surg
 This view can be especially helpful in tracking when certain themes, topics, or classification criteria gain prominence relative to overall discussion volume.
 """)
 
+render_telkom_sidebar_logo()
 render_telkom_footer()
