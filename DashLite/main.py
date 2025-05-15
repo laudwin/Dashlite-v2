@@ -24,12 +24,13 @@ if not st.session_state["authenticated"]:
 st.markdown("""
 <nav class="navbar navbar-expand-lg" style="background-color: #0099D8;">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#" style="color: white; text-decoration: none;">TISL Social Media Mentions Visualisation</a>
+    <a class="navbar-brand" href="#" "color: white important;" "underline: none;" "text-decoration: none !important;">TISL Social Media Mentions Visualisation</a>
   </div>
 </nav>
 """, unsafe_allow_html=True)
 
 #st.header('TISL Social Media Mentions Visualisation')
+
 # ✅ Define the month_diff function first
 def month_diff(start_date, end_date):
     return (end_date.year - start_date.year) * 12 + (end_date.month - start_date.month) + 1
@@ -48,8 +49,8 @@ end_date = max_date
 normalized_start_date = min_date
 normalized_end_date = end_date
 
-df = pd.read_parquet("DashLite/time_series_df.parquet")
-df_unfiltered = pd.read_parquet("DashLite/time_series_df_unfiltered.parquet")
+df = pd.read_parquet("time_series_df.parquet")
+df_unfiltered = pd.read_parquet("time_series_df_unfiltered.parquet")
 # Create two columns side by side
 col1, col2, col3 = st.columns([1, 1, 3])
 
