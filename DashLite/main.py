@@ -27,7 +27,7 @@ st.markdown("""
     <a class="navbar-brand" href="#" style="color: white; text-decoration: none;">TISL Social Media Mentions Visualisation</a>
   </div>
 </nav>
-""", unsafe_allow_html=True
+""", unsafe_allow_html=True)
 
 #st.header('TISL Social Media Mentions Visualisation')
 # ✅ Define the month_diff function first
